@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="bg-gray-900 text-white py-10 w-full overflow-hidden px-4 md:px-10 flex flex-col md:flex-row justify-between items-start text-sm">
       {/* Left Section */}
       <div className="w-full md:w-2/3 flex flex-col gap-3 mb-8 md:mb-0">
-        <img src="/images/logo.png" alt="Logo" className="w-32" />
+        <img src="/images/logo/logo.png" alt="Logo" className="w-32" />
         <p className="text-gray-400">123, Main Street, Your City</p>
         <p className="text-gray-400">Owner: John Doe</p>
         <p className="text-gray-400">+123 456 7890 | +987 654 3210</p>

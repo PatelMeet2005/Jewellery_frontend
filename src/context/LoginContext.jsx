@@ -1,100 +1,92 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { auth, googleProvider, browserPopupRedirectResolver } from '../config/firebase';
 
 const LoginContext = createContext();
 
 export const LoginProvider = ({ children }) => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    name: '',
-  });
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Listen to auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-
-    // Cleanup subscription
-    return () => unsubscribe();
+    // Check if user is logged in
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+    setLoading(false);
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Here you would typically handle the login/signup logic
-    console.log('Form submitted:', formData);
-  };
-
-  const signInWithGoogle = async () => {
+  const signUp = async (email, password, name) => {
     try {
-      setError(null);
-      const result = await signInWithPopup(
-        auth, 
-        googleProvider,
-        browserPopupRedirectResolver
-      );
-      setUser(result.user);
-      console.log('Google sign-in successful:', result.user);
-    } catch (error) {
-      console.error('Google sign-in error:', error);
-      setError(error.message);
-      // Handle specific error cases
-      if (error.code === 'auth/popup-closed-by-user') {
-        setError('Sign-in was cancelled');
-      } else if (error.code === 'auth/popup-blocked') {
-        setError('Please allow popups for this website');
-      } else {
-        setError('Failed to sign in with Google. Please try again.');
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to sign up');
       }
-    }
-  };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-      setError(null);
-      console.log('Sign out successful');
+      // Save user data and token to localStorage
+      localStorage.setItem('user', JSON.stringify(data.data));
+      setUser(data.data);
+      return data;
     } catch (error) {
-      console.error('Sign out error:', error);
-      setError('Failed to sign out. Please try again.');
+      throw new Error(error.message || 'Error signing up');
     }
   };
 
-  const value = {
-    isLogin,
-    setIsLogin,
-    formData,
-    handleChange,
-    handleSubmit,
-    user,
-    error,
-    loading,
-    signInWithGoogle,
-    handleSignOut
+  const signIn = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to sign in');
+      }
+
+      // Save user data and token to localStorage
+      localStorage.setItem('user', JSON.stringify(data.data));
+      setUser(data.data);
+      return data;
+    } catch (error) {
+      throw new Error(error.message || 'Error signing in');
+    }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const signOut = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+  };
 
   return (
-    <LoginContext.Provider value={value}>
+    <LoginContext.Provider
+      value={{
+        user,
+        loading,
+        signUp,
+        signIn,
+        signOut,
+      }}
+    >
       {children}
     </LoginContext.Provider>
   );

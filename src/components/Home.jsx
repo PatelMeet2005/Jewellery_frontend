@@ -2,7 +2,6 @@
 import { ImageSlider } from "./Imageslider";
 import { Selection } from "./Selection";
 import { CardSection } from "./CardSection";
-import { Footer } from "./FooterSection";
 
 function Home() {
   return (
@@ -32,7 +31,6 @@ function Home() {
       <div className="w-full ">
         <CardSection />
       </div>
-        <Footer />
     </div>
   );
 }
