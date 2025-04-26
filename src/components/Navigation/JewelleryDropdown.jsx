@@ -44,40 +44,6 @@ const JewelleryDropdown = ({ categories, handleProductClick }) => {
           </div>
         </div>
 
-        {/* WEDDING Column */}
-        <div className="w-1/5 px-8 border-r border-gray-100">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-pink-500 inline-block">WEDDING</h3>
-          <div className="space-y-3">
-            {Object.keys(categories.WEDDING).map((category) => (
-              <Link
-                key={category}
-                to={`/${category.toLowerCase()}`}
-                className="block text-sm text-gray-600 hover:text-pink-600 hover:translate-x-1 transform transition-all duration-200 ease-in-out"
-                onClick={() => handleProductClick(category)}
-              >
-                {category}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* FOR Column */}
-        <div className="w-1/5 px-8 border-r border-gray-100">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-purple-500 inline-block">FOR</h3>
-          <div className="space-y-3">
-            {Object.keys(categories.FOR).map((category) => (
-              <Link
-                key={category}
-                to={`/${category.toLowerCase()}`}
-                className="block text-sm text-gray-600 hover:text-purple-600 hover:translate-x-1 transform transition-all duration-200 ease-in-out"
-                onClick={() => handleProductClick(category)}
-              >
-                {category}
-              </Link>
-            ))}
-          </div>
-        </div>
-
         {/* PURITY Column */}
         <div className="w-1/5 pl-8">
           <h3 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-green-500 inline-block">PURITY</h3>
@@ -100,7 +66,6 @@ const JewelleryDropdown = ({ categories, handleProductClick }) => {
       <div className="bg-gray-50 p-4 mt-4 border-t border-gray-100">
         <div className="flex justify-between items-center">
           <p className="text-sm text-gray-500">Explore our latest collection</p>
-          <Link to="/products" className="text-sm text-red-600 hover:text-red-700 font-medium">View All →</Link>
         </div>
       </div>
     </div>

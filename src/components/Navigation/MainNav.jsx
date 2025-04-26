@@ -43,15 +43,6 @@ const MainNav = () => {
       SILVER: ["Sterling Silver", "Oxidized Silver"],
       PLATINUM: ["Platinum Rings", "Platinum Chains"],
     },
-    WEDDING: {
-      BRIDAL: ["Bridal Sets", "Wedding Bands"],
-      ENGAGEMENT: ["Solitaire", "Halo", "Three Stone"],
-    },
-    FOR: {
-      WOMEN: ["Women's Collection"],
-      MEN: ["Men's Collection"],
-      KIDS: ["Kids' Collection"],
-    },
     PURITY: {
       "18K": ["18K Gold Collection"],
       "22K": ["22K Gold Collection"],
@@ -125,12 +116,10 @@ const MainNav = () => {
                 );
               }}
             >
-              <Link
-                to="/jewellery"
-                className="text-gray-600 text-base font-medium hover:text-gray-900 transition duration-300"
-              >
+              <div className="text-gray-600 text-base font-medium hover:text-gray-900 cursor-pointer transition duration-300">
                 Jewellery
-              </Link>
+              </div>
+
               {jewelleryOpen && (
                 <div
                   className="absolute left-0 mt-2 bg-white shadow-lg rounded-lg w-48 z-10"
