@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogin } from "./LoginContext";
-import LoginCardImage from "./LoginCardImage";
 
 const LoginCard = ({ onClose, onSwitchToSignup, isModal = false }) => {
   const [email, setEmail] = useState('');

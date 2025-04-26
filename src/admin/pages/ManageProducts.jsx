@@ -5,15 +5,26 @@ const ManageProducts = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/admin/getProduct")
-      .then((response) => {
-        console.log(response.data);
-        setProducts(response.data.data);
-      })
-      .catch((error) => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/admin/getProduct");
+        console.log("Fetched Products:", response.data.data);
+        
+        if (Array.isArray(response.data.data)) {
+          setProducts(response.data.data); // Set products only if it is an array
+        } else {
+          console.error("Fetched data is not an array:", response.data.data);
+        }
+  
+      } catch (error) {
         console.error("Error fetching products:", error);
-      });
+      } 
+    };
+  
+    fetchProducts();
   }, []);
+  
+  
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
@@ -41,21 +52,38 @@ const ManageProducts = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => (
-            <tr key={product._id} className="border-t">
-              <td className="p-2">
-                <img src={product.productImage} alt={product.productName} className="w-16 h-16 object-cover" />
-              </td>
-              <td className="p-2">{product.productName}</td>
-              <td className="p-2">₹{product.productPrice}</td>
-              <td className="p-2">{product.productCategory}</td>
-              <td className="p-2">
-                <button className="text-blue-500 hover:underline mr-4">Edit</button>
-                <button onClick={() => handleDelete(product._id)} className="text-red-500 hover:underline">Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+            {products.length > 0 ? (
+              products.map((product) => (
+                <tr key={product._id} className="border-t">
+                  <td className="p-2">
+                    <img
+                      src={product.productImage}
+                      alt={product.productName}
+                      className="w-16 h-16 object-cover"
+                    />
+                  </td>
+                  <td className="p-2">{product.productName}</td>
+                  <td className="p-2">₹{product.productPrice}</td>
+                  <td className="p-2">{product.productCategory}</td>
+                  <td className="p-2">
+                    <button className="text-blue-500 hover:underline mr-4">Edit</button>
+                    <button
+                      onClick={() => handleDelete(product._id)}
+                      className="text-red-500 hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td className="p-2 text-center" colSpan="5">
+                  No products found.
+                </td>
+              </tr>
+            )}
+          </tbody>
       </table>
     </div>
   );

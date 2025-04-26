@@ -20,31 +20,12 @@ import ManageProducts from "./admin/pages/ManageProducts";
 import AddOffer from "./admin/pages/AddOffer";
 import ManageOffers from "./admin/pages/ManageOffers";
 
-
-
 function App() {
   return (
     <LoginProvider>
       <Router>
-        {/* Admin Routes */}
+        {/* Routes for User */}
         <Routes>
-          <Route
-            path="/admin/*"
-            element={
-              <div className="flex">
-                <Sidebar />
-                <Routes>
-                  {/* More admin routes will go here */}
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="add-product" element={<AddProduct />} />
-                  <Route path="products" element={<ManageProducts />} />
-                  <Route path="add-offer" element={<AddOffer />} />
-                  <Route path="offers" element={<ManageOffers />} />
-                </Routes>
-              </div>
-            }
-          />
-          {/* User Routes */}
           <Route path="/" element={<><Navigation /><Home /><Footer /></>} />
           <Route path="/profile" element={<><Navigation /><Profile /><Footer /></>} />
           <Route path="/chains" element={<><Navigation /><Chain /><Footer /></>} />
@@ -53,6 +34,25 @@ function App() {
           <Route path="/about" element={<><Navigation /><AboutUs /><Footer /></>} />
           <Route path="/offers" element={<><Navigation /><Offers /><Footer /></>} />
           <Route path="/contact" element={<><Navigation /><Contact /><Footer /></>} />
+          
+          {/* Admin Routes */}
+          <Route
+            path="/admin/*"
+            element={
+              <div className="flex">
+                <Sidebar />
+                <div className="admin-content">
+                  <Routes>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="add-product" element={<AddProduct />} />
+                    <Route path="products" element={<ManageProducts />} />
+                    <Route path="add-offer" element={<AddOffer />} />
+                    <Route path="offers" element={<ManageOffers />} />
+                  </Routes>
+                </div>
+              </div>
+            }
+          />
         </Routes>
       </Router>
     </LoginProvider>
