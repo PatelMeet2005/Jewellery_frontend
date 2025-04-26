@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLogin } from "../../context/LoginContext";
+import { useLogin } from "./LoginContext";
 
 const SignupCard = ({ onClose, onSwitchToSignup, isModal = false }) => {
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,6 +18,7 @@ const SignupCard = ({ onClose, onSwitchToSignup, isModal = false }) => {
     setError('');
     setLoading(true);
 
+    // Ensure passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -24,11 +26,11 @@ const SignupCard = ({ onClose, onSwitchToSignup, isModal = false }) => {
     }
 
     try {
-      await signUp(email, password, name);
+      await signUp(email, password, firstName, lastName, confirmPassword);  // Pass confirmPassword for validation
       navigate('/');
       if (onClose) onClose();
     } catch (error) {
-      setError(error.message);
+      setError(error.message);  // Display error message
     } finally {
       setLoading(false);
     }
@@ -40,54 +42,43 @@ const SignupCard = ({ onClose, onSwitchToSignup, isModal = false }) => {
         {isModal && (
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Create Account</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              ✖
-            </button>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">✖</button>
           </div>
         )}
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded relative" role="alert">
-            <span className="block sm:inline">{error}</span>
+            {error}
           </div>
         )}
 
-        <div className="mt-6">
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Creating account...' : 'Sign up'}
-          </button>
-        </div>
-
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Or continue with email</span>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="signup-name" className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <div className="mt-1">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                First Name
+              </label>
               <input
-                id="signup-name"
-                name="name"
+                id="first-name"
                 type="text"
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="last-name" className="block text-sm font-medium text-gray-700">
+                Last Name
+              </label>
+              <input
+                id="last-name"
+                type="text"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
           </div>
@@ -96,72 +87,69 @@ const SignupCard = ({ onClose, onSwitchToSignup, isModal = false }) => {
             <label htmlFor="signup-email" className="block text-sm font-medium text-gray-700">
               Email address
             </label>
-            <div className="mt-1">
-              <input
-                id="signup-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-            </div>
+            <input
+              id="signup-email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
           </div>
 
           <div>
             <label htmlFor="signup-password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
-            <div className="mt-1">
-              <input
-                id="signup-password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-            </div>
+            <input
+              id="signup-password"
+              type="password"
+              autoComplete="new-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
           </div>
 
           <div>
             <label htmlFor="signup-confirm-password" className="block text-sm font-medium text-gray-700">
               Confirm Password
             </label>
-            <div className="mt-1">
-              <input
-                id="signup-confirm-password"
-                name="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-            </div>
+            <input
+              id="signup-confirm-password"
+              type="password"
+              autoComplete="new-password"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
           </div>
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <button
-                type="button"
-                onClick={onSwitchToSignup}
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                Sign in
-              </button>
-            </p>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition disabled:opacity-50"
+          >
+            {loading ? 'Creating Account...' : 'Sign Up'}
+          </button>
+
+          <p className="text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={onSwitchToSignup}
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
+              Sign in
+            </button>
+          </p>
         </form>
       </div>
     </div>
   );
 };
 
-export default SignupCard; 
+export default SignupCard;

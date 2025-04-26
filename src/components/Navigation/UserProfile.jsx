@@ -1,22 +1,20 @@
 import { Link } from "react-router-dom";
-import { useLogin } from "../../context/LoginContext";
+import { useLogin } from "../Authentication/LoginContext";
 import { FiUser } from "react-icons/fi";
 
-const UserProfile = ({ profileOpen, setProfileOpen, timeoutId, onLoginClick, onSignupClick }) => {
-  const { user, logout } = useLogin();
+const UserProfile = ({ profileOpen, setProfileOpen, onLoginClick }) => {
+  const { user, signOut } = useLogin();
+
+  const handleMouseEnter = () => setProfileOpen(true);
+  const handleMouseLeave = () => setProfileOpen(false);
 
   return (
     <div className="absolute right-4 md:right-6">
       {user ? (
         <div
           className="relative"
-          onMouseEnter={() => {
-            clearTimeout(timeoutId);
-            setProfileOpen(true);
-          }}
-          onMouseLeave={() => {
-            timeoutId = setTimeout(() => setProfileOpen(false), 300);
-          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           <button className="cursor-pointer">
             <img
@@ -26,12 +24,11 @@ const UserProfile = ({ profileOpen, setProfileOpen, timeoutId, onLoginClick, onS
             />
           </button>
 
-          {/* Profile Dropdown Menu */}
           {profileOpen && (
             <div
               className="absolute right-0 mt-2 w-48 bg-white shadow-md border border-gray-200 rounded-md"
-              onMouseEnter={() => clearTimeout(timeoutId)}
-              onMouseLeave={() => setProfileOpen(false)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               <div className="p-3 border-b border-gray-200">
                 <p className="font-medium text-gray-800">{user.name || 'User'}</p>
@@ -44,7 +41,7 @@ const UserProfile = ({ profileOpen, setProfileOpen, timeoutId, onLoginClick, onS
                 View Profile
               </Link>
               <button
-                onClick={logout}
+                onClick={signOut}
                 className="block w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-100"
               >
                 Sign Out
@@ -64,4 +61,4 @@ const UserProfile = ({ profileOpen, setProfileOpen, timeoutId, onLoginClick, onS
   );
 };
 
-export default UserProfile; 
+export default UserProfile;

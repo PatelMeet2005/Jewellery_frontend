@@ -7,29 +7,53 @@ import Chain from "./Product/Chain";
 import Ring from "./Product/Ring";
 import Gold from "./Product/Gold";
 import { AboutUs } from "./components/Aboutus";
-import { LoginProvider } from "./context/LoginContext";
+import { LoginProvider } from "./components/Authentication/LoginContext";
 import { Footer } from "./components/FooterSection";
-import LoginPage from "./pages/LoginPage";
 import Offers from "./pages/Offers";
 import Contact from "./pages/Contact";
+
+// Admin imports
+import Sidebar from "./admin/components/Sidebar";
+import Dashboard from "./admin/pages/Dashboard";
+import AddProduct from './admin/pages/AddProduct';
+import ManageProducts from "./admin/pages/ManageProducts";
+import AddOffer from "./admin/pages/AddOffer";
+import ManageOffers from "./admin/pages/ManageOffers";
+
+
 
 function App() {
   return (
     <LoginProvider>
       <Router>
-        <Navigation />
+        {/* Admin Routes */}
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/chains" element={<Chain />} />
-          <Route path="/rings" element={<Ring />} />
-          <Route path="/gold" element={<Gold />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/offers" element={<Offers />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route
+            path="/admin/*"
+            element={
+              <div className="flex">
+                <Sidebar />
+                <Routes>
+                  {/* More admin routes will go here */}
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="add-product" element={<AddProduct />} />
+                  <Route path="products" element={<ManageProducts />} />
+                  <Route path="add-offer" element={<AddOffer />} />
+                  <Route path="offers" element={<ManageOffers />} />
+                </Routes>
+              </div>
+            }
+          />
+          {/* User Routes */}
+          <Route path="/" element={<><Navigation /><Home /><Footer /></>} />
+          <Route path="/profile" element={<><Navigation /><Profile /><Footer /></>} />
+          <Route path="/chains" element={<><Navigation /><Chain /><Footer /></>} />
+          <Route path="/rings" element={<><Navigation /><Ring /><Footer /></>} />
+          <Route path="/gold" element={<><Navigation /><Gold /><Footer /></>} />
+          <Route path="/about" element={<><Navigation /><AboutUs /><Footer /></>} />
+          <Route path="/offers" element={<><Navigation /><Offers /><Footer /></>} />
+          <Route path="/contact" element={<><Navigation /><Contact /><Footer /></>} />
         </Routes>
-        <Footer />
       </Router>
     </LoginProvider>
   );

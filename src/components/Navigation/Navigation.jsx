@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useLogin } from "../../context/LoginContext";
+import { useState, useEffect } from "react";
+import { useLogin } from "../Authentication/LoginContext";
 import LoginCard from "../Authentication/LoginCard";
 import { Link } from "react-router-dom";
 import MainNav from './MainNav';
@@ -64,6 +64,13 @@ function Navigation() {
     setJewelleryOpen(false);
   };
 
+  // Automatically close the login modal when the user is logged in
+  useEffect(() => {
+    if (user) {
+      setLoginOpen(false);
+    }
+  }, [user]);
+
   return (
     <>
       <MainNav 
@@ -80,10 +87,15 @@ function Navigation() {
         handleProductClick={handleProductClick}
       />
 
-      {/* Login Card - Only show when loginOpen is true */}
-      {loginOpen && <LoginCard isOpen={loginOpen} onClose={() => setLoginOpen(false)} />}
+      {/* Login Card - Only show when loginOpen is true and user is not logged in */}
+      {loginOpen && !user && (
+        <LoginCard 
+          isOpen={loginOpen} 
+          onClose={() => setLoginOpen(false)} 
+        />
+      )}
     </>
   );
 }
 
-export default Navigation; 
+export default Navigation;

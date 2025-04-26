@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLogin } from '../context/LoginContext';
+import { useLogin } from './Authentication/LoginContext';
 import { FiUser, FiMail, FiCalendar, FiMapPin, FiShoppingBag, FiHeart, FiEdit2 } from 'react-icons/fi';
 
 const Profile = () => {

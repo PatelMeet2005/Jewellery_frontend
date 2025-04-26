@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { useLogin } from "../../context/LoginContext";
+import { useLogin } from "../Authentication/LoginContext";
 
 const MobileMenu = ({ isOpen, jewelleryOpen, setJewelleryOpen, categories, handleProductClick }) => {
-  const { user, handleSignOut } = useLogin();
+  const { user, signOut } = useLogin();
 
   return (
     <div className="md:hidden bg-white w-full absolute left-0 top-16 shadow-md">
@@ -22,60 +22,38 @@ const MobileMenu = ({ isOpen, jewelleryOpen, setJewelleryOpen, categories, handl
                   <div key={category} className="space-y-2">
                     <h3 className="font-bold text-gray-900">{category}</h3>
                     <div className="pl-4 space-y-2">
-                      {Array.isArray(items[0]) 
-                        ? items.flat().filter(Boolean).map((item, idx) => (
-                            <a
-                              key={idx}
-                              href="#"
-                              className="block text-sm text-gray-600 hover:text-gray-900"
-                            >
-                              {item}
-                            </a>
-                          ))
-                        : items.map((item, idx) => (
-                            <a
-                              key={idx}
-                              href="#"
-                              className="block text-sm text-gray-600 hover:text-gray-900"
-                            >
-                              {item}
-                            </a>
-                          ))
-                      }
+                      {Object.keys(items).map((item, idx) => (
+                        <Link
+                          key={idx}
+                          to={`/${item.toLowerCase()}`}
+                          className="block text-sm text-gray-600 hover:text-gray-900"
+                          onClick={() => handleProductClick(item)}
+                        >
+                          {item}
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 ))}
               </div>
             )}
           </div>
-          <Link
-            to="/offers"
-            className="block text-gray-600 text-lg font-medium hover:text-gray-900"
-          >
+          <Link to="/offers" className="block text-gray-600 text-lg font-medium hover:text-gray-900">
             Offers
           </Link>
-          <Link
-            to="/about"
-            className="block text-gray-600 text-lg font-medium hover:text-gray-900"
-          >
+          <Link to="/about" className="block text-gray-600 text-lg font-medium hover:text-gray-900">
             About Us
           </Link>
-          <Link
-            to="/contact"
-            className="block text-gray-600 text-lg font-medium hover:text-gray-900"
-          >
+          <Link to="/contact" className="block text-gray-600 text-lg font-medium hover:text-gray-900">
             Contact Us
           </Link>
           {user && (
             <>
-              <Link
-                to="/profile"
-                className="block text-gray-600 text-lg font-medium hover:text-gray-900"
-              >
+              <Link to="/profile" className="block text-gray-600 text-lg font-medium hover:text-gray-900">
                 Profile
               </Link>
               <button
-                onClick={handleSignOut}
+                onClick={signOut}
                 className="block w-full text-left text-gray-600 text-lg font-medium hover:text-gray-900"
               >
                 Sign Out
@@ -88,4 +66,4 @@ const MobileMenu = ({ isOpen, jewelleryOpen, setJewelleryOpen, categories, handl
   );
 };
 
-export default MobileMenu; 
+export default MobileMenu;

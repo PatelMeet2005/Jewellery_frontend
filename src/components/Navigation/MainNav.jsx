@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLogin } from '../../context/LoginContext';
+import { useLogin } from '../Authentication/LoginContext';
 import LoginCard from "../Authentication/LoginCard";
 import SignupCard from "../Authentication/SignupCard";
 import JewelleryDropdown from "./JewelleryDropdown";
@@ -11,10 +11,9 @@ const MainNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
   const [jewelleryOpen, setJewelleryOpen] = useState(false);
-  const timeoutId = useRef(null);
+  const timeoutId = useRef(null);  // Fixed by adding useRef here
   const navigate = useNavigate();
   const { user, logout } = useLogin();
 
@@ -52,12 +51,10 @@ const MainNav = () => {
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
-    setIsLogin(true);
   };
 
   const handleSignupClick = () => {
     setIsSignupModalOpen(true);
-    setIsLogin(false);
   };
 
   const handleCloseModal = () => {
@@ -223,4 +220,4 @@ const MainNav = () => {
   );
 };
 
-export default MainNav; 
+export default MainNav;
