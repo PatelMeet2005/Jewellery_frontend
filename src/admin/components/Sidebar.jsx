@@ -1,57 +1,54 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiHome, FiBox, FiUser, FiLogOut } from 'react-icons/fi';
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { FaTachometerAlt, FaBoxOpen, FaPercent, FaSignOutAlt, FaGift } from "react-icons/fa";
 
 const Sidebar = () => {
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken'); // Remove token
-    navigate('/admin-login');              // Redirect to login page
+  const handleSignOut = () => {
+    sessionStorage.removeItem("userEmail");
+    navigate("/");
+    window.location.reload(); // Force refresh after logout
   };
 
+  const menuItems = [
+    { name: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
+    { name: "Add Product", path: "/admin/add-product", icon: <FaBoxOpen /> },
+    { name: "Manage Products", path: "/admin/products", icon: <FaBoxOpen /> },
+    { name: "Add Offer", path: "/admin/add-offer", icon: <FaGift /> },
+    { name: "Manage Offers", path: "/admin/offers", icon: <FaPercent /> },
+  ];
+
   return (
-    <div className="h-screen w-64 bg-white shadow-lg flex flex-col justify-between">
-      {/* Sidebar Top */}
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-8">Admin Panel</h1>
-
-        <nav className="flex flex-col gap-4">
-          <div
-            onClick={() => navigate('/admin/dashboard')}
-            className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer transition-all"
-          >
-            <FiHome className="text-xl" />
-            <span className="text-base font-medium">Dashboard</span>
-          </div>
-
-          <div
-            onClick={() => navigate('/admin/products')}
-            className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer transition-all"
-          >
-            <FiBox className="text-xl" />
-            <span className="text-base font-medium">Products</span>
-          </div>
-
-          <div
-            onClick={() => navigate('/admin/users')}
-            className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer transition-all"
-          >
-            <FiUser className="text-xl" />
-            <span className="text-base font-medium">Users</span>
-          </div>
-        </nav>
+    <div className="h-screen w-64 bg-gray-900 text-white flex flex-col shadow-lg">
+      <div className="p-6 text-3xl font-bold tracking-wide border-b border-gray-700">
+        Admin Panel
       </div>
+      <div className="flex-1 p-4 space-y-4">
+        {menuItems.map((item) => (
+          <Link
+            key={item.name}
+            to={item.path}
+            className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200
+            ${
+              location.pathname === item.path
+                ? "bg-gray-700"
+                : "hover:bg-gray-800"
+            }`}
+          >
+            {item.icon}
+            <span className="text-md">{item.name}</span>
+          </Link>
+        ))}
 
-      {/* Sidebar Bottom (Sign Out) */}
-      <div className="p-6">
-        <div
-          onClick={handleLogout}
-          className="flex items-center gap-3 p-3 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-lg cursor-pointer transition-all"
+        {/* Logout Button */}
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-gray-800 w-full text-left"
         >
-          <FiLogOut className="text-xl" />
-          <span className="text-base font-semibold">Sign Out</span>
-        </div>
+          <FaSignOutAlt />
+          <span className="text-md">Logout</span>
+        </button>
       </div>
     </div>
   );

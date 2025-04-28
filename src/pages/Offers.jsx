@@ -1,109 +1,107 @@
-import React from 'react';
-import { FiClock, FiTag, FiGift } from 'react-icons/fi';
+import React, { useState, useEffect } from "react";
+import { FiShoppingCart, FiHeart } from "react-icons/fi";
+import { getWishlist, addToWishlist, removeFromWishlist, isProductInWishlist } from '../utils/wishlist';
+
 
 const Offers = () => {
-  const offers = [
-    {
-      id: 1,
-      title: "Summer Special",
-      description: "Get 20% off on all gold jewellery",
-      validUntil: "2024-08-31",
-      code: "SUMMER20",
-      image: "/images/offers/summer-special.jpg",
-      type: "discount"
-    },
-    {
-      id: 2,
-      title: "Wedding Collection",
-      description: "Buy 1 get 1 free on selected bridal sets",
-      validUntil: "2024-12-31",
-      code: "BRIDALBOGO",
-      image: "/images/offers/wedding-collection.jpg",
-      type: "bogo"
-    },
-    {
-      id: 3,
-      title: "New Customer Offer",
-      description: "Flat ₹5000 off on first purchase above ₹50,000",
-      validUntil: "2024-12-31",
-      code: "WELCOME5000",
-      image: "/images/offers/new-customer.jpg",
-      type: "flat"
-    },
-    {
-      id: 4,
-      title: "Festival Special",
-      description: "Extra 5% off on all diamond jewellery",
-      validUntil: "2024-10-31",
-      code: "DIAMOND5",
-      image: "/images/offers/festival-special.jpg",
-      type: "discount"
-    }
-  ];
+  const [offersData, setOffersData] = useState([]);
+  const [wishlistItems, setWishlistItems] = useState([]);
 
-  const getOfferIcon = (type) => {
-    switch (type) {
-      case 'discount':
-        return <FiTag className="text-red-500" />;
-      case 'bogo':
-        return <FiGift className="text-green-500" />;
-      case 'flat':
-        return <FiTag className="text-blue-500" />;
-      default:
-        return <FiTag className="text-gray-500" />;
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/admin/getOffers");
+        const data = await response.json();
+        console.log("Fetched Offers:", data.data);
+        setOffersData(data.data);
+
+        const wishlist = getWishlist();
+        setWishlistItems(wishlist.map(item => item._id));
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      }
+    };
+    fetchOffers();
+  }, []);
+
+  const calculateDiscountedPrice = (originalPrice, discount) => {
+    return (originalPrice - originalPrice * (discount / 100)).toFixed(2);
+  };
+
+  const handleWishlistClick = (offer) => {
+    if (wishlistItems.includes(offer._id)) {
+      removeFromWishlist(offer._id);
+      setWishlistItems(wishlistItems.filter(id => id !== offer._id));
+    } else {
+      addToWishlist(offer);
+      setWishlistItems([...wishlistItems, offer._id]);
     }
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Special Offers</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {offers.map((offer) => (
-          <div key={offer.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-            <div className="relative h-48">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {offersData.map((offer) => (
+          <div
+            key={offer._id}
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+          >
+            <div className="relative">
               <img
-                src={offer.image}
-                alt={offer.title}
-                className="w-full h-full object-cover"
+                src={`http://localhost:8000/${offer.productId?.productImage}`}
+                alt={offer.productId?.productName}
+                className="w-full h-64 object-cover"
               />
-              <div className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
-                {getOfferIcon(offer.type)}
-              </div>
+<button onClick={() => handleWishlistClick(offer)}
+  className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100">
+              <FiHeart className={wishlistItems.includes(offer._id) ? "text-red-500" : "text-gray-600"} />
+            </button>
             </div>
-            
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">{offer.title}</h2>
-              <p className="text-gray-600 mb-4">{offer.description}</p>
-              
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center text-sm text-gray-500">
-                  <FiClock className="mr-1" />
-                  <span>Valid until: {new Date(offer.validUntil).toLocaleDateString()}</span>
-                </div>
-                <span className="text-sm font-medium text-gray-700">Code: {offer.code}</span>
+            <div className="p-4">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                {offer.productId?.productName}
+              </h2>
+              <p className="text-gray-600 text-sm mb-4">
+                {offer.productId?.productDescription}
+              </p>
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-gray-500 text-sm">
+                  Weight: {offer.productId?.productWeight}
+                </span>
+                <span className="text-gray-500 text-sm">
+                  Purity: {offer.productId?.productPurity}
+                </span>
               </div>
-              
-              <button className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors duration-300">
-                Apply Offer
-              </button>
+              <div className="flex justify-between items-center">
+                <div>
+                  <span className="text-gray-500 text-sm line-through mr-2">
+                    ₹{offer.productId?.productPrice}
+                  </span>
+                  <span className="text-xl font-bold text-green-600">
+                    ₹
+                    {calculateDiscountedPrice(
+                      offer.productId?.productPrice,
+                      offer.discount
+                    )}
+                  </span>
+                </div>
+                <button className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center gap-2">
+                  <FiShoppingCart />
+                  Proceed to Pay
+                </button>
+              </div>
+              <div className="mt-2">
+                <span className="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded">
+                  Save {offer.discount}%
+                </span>
+              </div>
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mt-12 bg-gray-50 p-8 rounded-lg">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Terms & Conditions</h2>
-        <ul className="list-disc list-inside text-gray-600 space-y-2">
-          <li>Offers cannot be combined with other promotions</li>
-          <li>Valid only on full-priced items</li>
-          <li>Minimum purchase amount may apply</li>
-          <li>Offers are subject to change without notice</li>
-          <li>Valid only on selected items</li>
-        </ul>
       </div>
     </div>
   );
 };
 
-export default Offers; 
+export default Offers;

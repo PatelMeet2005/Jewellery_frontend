@@ -1,9 +1,13 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
+import { getWishlist, addToWishlist, removeFromWishlist, isProductInWishlist } from '../../utils/wishlist';
+
 
 const Ring = () => {
   const [productsData, setProductsData] = useState([]);
+const [wishlistItems, setWishlistItems] = useState([]);
+
 
   useEffect(() => {
     const getData = async () => {
@@ -13,13 +17,30 @@ const Ring = () => {
         console.log("Fetched Products:", data.data);
         setProductsData(data.data); // Set products only if it is an array
 
-        
+  const wishlist = getWishlist();
+  setWishlistItems(wishlist.map(item => item._id));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
     getData();
   },[])
+
+ const handleWishlistClick = (product) => {
+    if (wishlistItems.includes(product._id)) {
+      // Remove from wishlist
+      removeFromWishlist(product._id);
+      setWishlistItems(wishlistItems.filter(id => id !== product._id)); // Remove from state
+    } else {
+      // Add to wishlist
+      addToWishlist(product);
+      setWishlistItems([...wishlistItems, product._id]); // Add to state
+    }
+  };
+
+  
+
+  
   // Sample product data
   const products = [
     {
@@ -75,9 +96,12 @@ const Ring = () => {
                 alt={product.productName}
                 className="w-full h-64 object-cover"
               />
-              <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100">
-                <FiHeart className="text-gray-600 hover:text-red-500" />
-              </button>
+                <button
+  onClick={() => handleWishlistClick(product)}
+  className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
+>
+  <FiHeart className={wishlistItems.includes(product._id) ? "text-red-500" : "text-gray-600 hover:text-red-500"} />
+</button>
             </div>
             <div className="p-4">
               <h2 className="text-xl font-semibold text-gray-800 mb-2">{product.productName}</h2>
@@ -90,7 +114,7 @@ const Ring = () => {
                 <span className="text-xl font-bold text-gray-800">RS.{product.productPrice}</span>
                 <button className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center gap-2">
                   <FiShoppingCart />
-                  Add to Cart
+                  Proceed to Pay
                 </button>
               </div>
             </div>

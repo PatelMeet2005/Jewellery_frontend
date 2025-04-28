@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,6 +16,16 @@ const Profile = () => {
         joinDate: new Date().toLocaleDateString(), // Dummy join date
       });
     }
+
+    const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  setWishlistCount(storedWishlist.length);
+
+  // Optional: Listen to storage change if needed
+  window.addEventListener('storage', () => {
+    const updatedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    setWishlistCount(updatedWishlist.length);
+  });
+
   }, []);
 
   const handleSignOut = () => {
@@ -87,19 +98,7 @@ const Profile = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-500 text-sm">Wishlist Items</p>
-                <h3 className="text-2xl font-bold text-gray-800">8</h3>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <div className="bg-red-50 p-3 rounded-lg">
-                <FiMapPin className="text-red-500 text-2xl" />
-              </div>
-              <div className="ml-4">
-                <p className="text-gray-500 text-sm">Saved Addresses</p>
-                <h3 className="text-2xl font-bold text-gray-800">3</h3>
+                <h3 className="text-2xl font-bold text-gray-800">{wishlistCount}</h3>
               </div>
             </div>
           </div>
