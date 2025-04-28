@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
 import { getWishlist, addToWishlist, removeFromWishlist, isProductInWishlist } from '../../utils/wishlist';
+import ProceedToPayButton from '../../components/ProceedToPayButton';
 
 
 const Gold = () => {
@@ -69,11 +70,7 @@ const [wishlistItems, setWishlistItems] = useState([]);
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xl font-bold text-gray-800">₹{product.productPrice}</span>
-                  <button className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center gap-2">
-                    <FiShoppingCart />
-                    Proceed to Pay
-                  </button>
-                </div>
+                  <ProceedToPayButton product={product} />                </div>
               </div>
             </div>
         ))}

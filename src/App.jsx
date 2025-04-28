@@ -8,6 +8,7 @@ import { LoginProvider } from "./components/Authentication/LoginContext";
 import { Footer } from "./components/FooterSection";
 import Offers from "./pages/Offers";
 import Contact from "./pages/Contact";
+import Checkout from "./pages/Checkout";
 
 // Product Categories
 import Ring from './Product/category/Ring';
@@ -55,6 +56,7 @@ function App() {
           <Route path="/about" element={<><Navigation /><AboutUs /><Footer /></>} />
           <Route path="/offers" element={<><Navigation /><Offers /><Footer /></>} />
           <Route path="/contact" element={<><Navigation /><Contact /><Footer /></>} />
+          <Route path="/checkout" element={<><Navigation /><Checkout /><Footer /></>} />
 
           {/* Product Category Routes */}
           <Route path="/rings" element={<><Navigation /><Ring /><Footer /></>} />

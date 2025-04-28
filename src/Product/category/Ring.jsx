@@ -1,13 +1,17 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { FiShoppingCart, FiHeart } from 'react-icons/fi';
-import { getWishlist, addToWishlist, removeFromWishlist, isProductInWishlist } from '../../utils/wishlist';
-
+import React from "react";
+import { useState, useEffect } from "react";
+import { FiShoppingCart, FiHeart } from "react-icons/fi";
+import {
+  getWishlist,
+  addToWishlist,
+  removeFromWishlist,
+  isProductInWishlist,
+} from "../../utils/wishlist";
+import ProceedToPayButton from "../../components/ProceedToPayButton";
 
 const Ring = () => {
   const [productsData, setProductsData] = useState([]);
-const [wishlistItems, setWishlistItems] = useState([]);
-
+  const [wishlistItems, setWishlistItems] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
@@ -17,20 +21,20 @@ const [wishlistItems, setWishlistItems] = useState([]);
         console.log("Fetched Products:", data.data);
         setProductsData(data.data); // Set products only if it is an array
 
-  const wishlist = getWishlist();
-  setWishlistItems(wishlist.map(item => item._id));
+        const wishlist = getWishlist();
+        setWishlistItems(wishlist.map((item) => item._id));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    }
+    };
     getData();
-  },[])
+  }, []);
 
- const handleWishlistClick = (product) => {
+  const handleWishlistClick = (product) => {
     if (wishlistItems.includes(product._id)) {
       // Remove from wishlist
       removeFromWishlist(product._id);
-      setWishlistItems(wishlistItems.filter(id => id !== product._id)); // Remove from state
+      setWishlistItems(wishlistItems.filter((id) => id !== product._id)); // Remove from state
     } else {
       // Add to wishlist
       addToWishlist(product);
@@ -38,9 +42,6 @@ const [wishlistItems, setWishlistItems] = useState([]);
     }
   };
 
-  
-
-  
   // Sample product data
   const products = [
     {
@@ -50,7 +51,7 @@ const [wishlistItems, setWishlistItems] = useState([]);
       price: "₹1,25,000",
       image: "../public/images/products/Rings/ring1.jpg",
       weight: "3g",
-      purity: "Platinum"
+      purity: "Platinum",
     },
     {
       id: 2,
@@ -59,7 +60,7 @@ const [wishlistItems, setWishlistItems] = useState([]);
       price: "₹65,000",
       image: "../public/images/products/Rings/ring2.jpg",
       weight: "8g",
-      purity: "22K"
+      purity: "22K",
     },
     {
       id: 3,
@@ -68,7 +69,7 @@ const [wishlistItems, setWishlistItems] = useState([]);
       price: "₹85,000",
       image: "../public/images/products/Rings/ring3.jpg",
       weight: "5g",
-      purity: "18K"
+      purity: "18K",
     },
     {
       id: 4,
@@ -77,54 +78,69 @@ const [wishlistItems, setWishlistItems] = useState([]);
       price: "₹95,000",
       image: "../public/images/products/Rings/ring4.jpg",
       weight: "10g",
-      purity: "18K"
-    }
+      purity: "18K",
+    },
   ];
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Rings Collection</h1>
-        {productsData.map((product) => (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          
-          <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-            {product.productCategory === "Ring"  && (
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">
+        Rings Collection
+      </h1>
+      {productsData.map((product) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div
+            key={product.id}
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+          >
+            {product.productCategory === "Ring" && (
               <>
-               <div className="relative">
-              <img
-                src={product.productImage}
-                alt={product.productName}
-                className="w-full h-64 object-cover"
-              />
-                <button
-  onClick={() => handleWishlistClick(product)}
-  className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
->
-  <FiHeart className={wishlistItems.includes(product._id) ? "text-red-500" : "text-gray-600 hover:text-red-500"} />
-</button>
-            </div>
-            <div className="p-4">
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">{product.productName}</h2>
-              <p className="text-gray-600 text-sm mb-4">{product.productDescription}</p>
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-gray-500 text-sm">Weight: {product.productWeight}</span>
-                <span className="text-gray-500 text-sm">Purity: 18k</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xl font-bold text-gray-800">RS.{product.productPrice}</span>
-                <button className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center gap-2">
-                  <FiShoppingCart />
-                  Proceed to Pay
-                </button>
-              </div>
-            </div>
-            </>)}
-           
+                <div className="relative">
+                  <img
+                    src={product.productImage}
+                    alt={product.productName}
+                    className="w-full h-64 object-cover"
+                  />
+                  <button
+                    onClick={() => handleWishlistClick(product)}
+                    className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
+                  >
+                    <FiHeart
+                      className={
+                        wishlistItems.includes(product._id)
+                          ? "text-red-500"
+                          : "text-gray-600 hover:text-red-500"
+                      }
+                    />
+                  </button>
+                </div>
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                    {product.productName}
+                  </h2>
+                  <p className="text-gray-600 text-sm mb-4">
+                    {product.productDescription}
+                  </p>
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-gray-500 text-sm">
+                      Weight: {product.productWeight}
+                    </span>
+                    <span className="text-gray-500 text-sm">Purity: 18k</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xl font-bold text-gray-800">
+                      RS.{product.productPrice}
+                    </span>
+                    <ProceedToPayButton product={product} />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-      </div>
-        ))}
+        </div>
+      ))}
     </div>
   );
 };
 
-export default Ring; 
+export default Ring;

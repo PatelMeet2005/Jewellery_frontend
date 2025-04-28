@@ -1,11 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { FiUser, FiMail, FiCalendar, FiMapPin, FiShoppingBag, FiHeart } from "react-icons/fi";
+import {
+  FiUser,
+  FiMail,
+  FiCalendar,
+  FiMapPin,
+  FiShoppingBag,
+  FiHeart,
+} from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [wishlistCount, setWishlistCount] = useState(0);
   const navigate = useNavigate();
+  const [totalOrders, setTotalOrders] = useState(0);
+
+  const fetchUserOrders = async (email) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/orders/${email}`);
+      const data = await response.json();
+      setTotalOrders(data.length);
+    } catch (error) {
+      console.error("Error fetching user orders:", error);
+    }
+  };
 
   useEffect(() => {
     const email = sessionStorage.getItem("userEmail");
@@ -15,17 +33,18 @@ const Profile = () => {
         email: email,
         joinDate: new Date().toLocaleDateString(), // Dummy join date
       });
+      fetchUserOrders(email);
     }
 
     const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-  setWishlistCount(storedWishlist.length);
+    setWishlistCount(storedWishlist.length - 1);
 
-  // Optional: Listen to storage change if needed
-  window.addEventListener('storage', () => {
-    const updatedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlistCount(updatedWishlist.length);
-  });
-
+    // Optional: Listen to storage change if needed
+    window.addEventListener("storage", () => {
+      const updatedWishlist =
+        JSON.parse(localStorage.getItem("wishlist")) || [];
+      setWishlistCount(updatedWishlist.length);
+    });
   }, []);
 
   const handleSignOut = () => {
@@ -38,8 +57,12 @@ const Profile = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Please log in to view your profile</h2>
-          <p className="text-gray-600">You need to be logged in to access this page.</p>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            Please log in to view your profile
+          </h2>
+          <p className="text-gray-600">
+            You need to be logged in to access this page.
+          </p>
         </div>
       </div>
     );
@@ -78,27 +101,33 @@ const Profile = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <div className="bg-red-50 p-3 rounded-lg">
-                <FiShoppingBag className="text-red-500 text-2xl" />
-              </div>
-              <div className="ml-4">
-                <p className="text-gray-500 text-sm">Total Orders</p>
-                <h3 className="text-2xl font-bold text-gray-800">12</h3>
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center">
+                <div className="bg-red-50 p-3 rounded-lg">
+                  <FiShoppingBag className="text-red-500 text-2xl" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-gray-500 text-sm">Total Orders</p>
+                  <h3 className="text-2xl font-bold text-gray-800">
+                    {totalOrders}
+                  </h3>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center">
-              <div className="bg-red-50 p-3 rounded-lg">
-                <FiHeart className="text-red-500 text-2xl" />
-              </div>
-              <div className="ml-4">
-                <p className="text-gray-500 text-sm">Wishlist Items</p>
-                <h3 className="text-2xl font-bold text-gray-800">{wishlistCount}</h3>
+            <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center">
+                <div className="bg-red-50 p-3 rounded-lg">
+                  <FiHeart className="text-red-500 text-2xl" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-gray-500 text-sm">Wishlist Items</p>
+                  <h3 className="text-2xl font-bold text-gray-800">
+                    {wishlistCount}
+                  </h3>
+                </div>
               </div>
             </div>
           </div>

@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { FiShoppingCart, FiHeart } from "react-icons/fi";
-import { getWishlist, addToWishlist, removeFromWishlist, isProductInWishlist } from '../utils/wishlist';
-
+import {
+  getWishlist,
+  addToWishlist,
+  removeFromWishlist,
+  isProductInWishlist,
+} from "../utils/wishlist";
+import { i } from "framer-motion/client";
+import ProceedToPayButton from "../components/ProceedToPayButton";
 
 const Offers = () => {
   const [offersData, setOffersData] = useState([]);
@@ -16,7 +22,7 @@ const Offers = () => {
         setOffersData(data.data);
 
         const wishlist = getWishlist();
-        setWishlistItems(wishlist.map(item => item._id));
+        setWishlistItems(wishlist.map((item) => item._id));
       } catch (error) {
         console.error("Error fetching offers:", error);
       }
@@ -31,7 +37,7 @@ const Offers = () => {
   const handleWishlistClick = (offer) => {
     if (wishlistItems.includes(offer._id)) {
       removeFromWishlist(offer._id);
-      setWishlistItems(wishlistItems.filter(id => id !== offer._id));
+      setWishlistItems(wishlistItems.filter((id) => id !== offer._id));
     } else {
       addToWishlist(offer);
       setWishlistItems([...wishlistItems, offer._id]);
@@ -53,10 +59,18 @@ const Offers = () => {
                 alt={offer.productId?.productName}
                 className="w-full h-64 object-cover"
               />
-<button onClick={() => handleWishlistClick(offer)}
-  className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100">
-              <FiHeart className={wishlistItems.includes(offer._id) ? "text-red-500" : "text-gray-600"} />
-            </button>
+              <button
+                onClick={() => handleWishlistClick(offer)}
+                className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100"
+              >
+                <FiHeart
+                  className={
+                    wishlistItems.includes(offer._id)
+                      ? "text-red-500"
+                      : "text-gray-600"
+                  }
+                />
+              </button>
             </div>
             <div className="p-4">
               <h2 className="text-xl font-semibold text-gray-800 mb-2">
@@ -86,10 +100,20 @@ const Offers = () => {
                     )}
                   </span>
                 </div>
-                <button className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center gap-2">
-                  <FiShoppingCart />
-                  Proceed to Pay
-                </button>
+                <ProceedToPayButton
+                  product={{
+                    _id: offer.productId?._id,
+                    productName: offer.productId?.productName,
+                    productDescription: offer.productId?.productDescription,
+                    productImage:offer.productId?.productImage,
+                    productPrice: calculateDiscountedPrice(
+                      offer.productId?.productPrice,
+                      offer.discount
+                    ),
+                    productWeight: offer.productId?.productWeight,
+                    productPurity: offer.productId?.productPurity,
+                  }}
+                />
               </div>
               <div className="mt-2">
                 <span className="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded">
